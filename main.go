@@ -23,8 +23,6 @@ import (
 
 var db *gorm.DB
 
-// var router *mux.Router
-
 type User struct {
 	ID       string `gorm:"primary_key;not null;unique" json:"id"`
 	Username string `gorm:"size:255;not null;unique" json:"username"`
@@ -97,13 +95,12 @@ func main() {
 		log.Fatalf("cannot migrate table: %v", err)
 	}
 
-	for i, _ := range users {
-		// users[i].Password = hash
+	for i := range users {
 		err = db.Debug().Model(&User{}).Create(&users[i]).Error
 		if err != nil {
 			log.Fatalf("cannot seed users table: %v", err)
 		}
-		log.Println(users[i].ID, users[i].Username, users[i].Email, users[i].Password)
+		// log.Println(users[i].ID, users[i].Username, users[i].Email, users[i].Password)
 	}
 
 	//oauth
@@ -160,9 +157,6 @@ func main() {
 		log.Println("Response Error:", re.Error.Error())
 	})
 
-	//oauth
-	// router = mux.NewRouter()
-
 	http.HandleFunc("/oauth", func(w http.ResponseWriter, r *http.Request) {
 		srv.HandleTokenRequest(w, r)
 	})
@@ -177,20 +171,11 @@ func main() {
 		user := User{}
 		db.Debug().Model(User{}).Where("id = ?", token.GetUserID()).Take(&user)
 
-		// data := map[string]interface{}{
-		// 	"expires_in": int64(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn()).Sub(time.Now()).Seconds()),
-		// 	"client_id":  token.GetClientID(),
-		// 	"user_id":    token.GetUserID(),
-		// }
-
 		e := json.NewEncoder(w)
 		e.SetIndent("", "  ")
 		e.Encode(user)
 
 	})
-
-	// router.HandleFunc("/oauth", )
-	// router.HandleFunc("/home")
 
 	fmt.Println("Listening to port 8000")
 	log.Fatal(http.ListenAndServe(":8000", nil))
