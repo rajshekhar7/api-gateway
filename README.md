@@ -1,7 +1,4 @@
 # api-gateway
-vernacular.ai backend assignment
-
-Resource Owner Password Credentials Grant has been implemented since we own the client.
 
 Run main.go
 `$ go run main.go`
@@ -34,6 +31,5 @@ $ curl "http://localhost:8000/home?access_token=STSYUQWHNQ-BHLNZOS5IEW" | jq
 }
 
 ```
-Password was hashed before storing in the database. 
 
 
